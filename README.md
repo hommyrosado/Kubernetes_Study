@@ -19,7 +19,7 @@ Kubernetes Study
 
 | Day | Date | Topic                       | Task                                                                  |Status|
 | --- | ---- | --------------------------- | --------------------------------------------------------------------- |----|
-| 1   | 6/30 | Pods & Labels               | Create, label, and inspect a basic Pod                                |  [ ]  |
+| 1   | 6/30 | Pods & Labels               | Create, label, and inspect a basic Pod                                |  [x] 1  |
 | 2   | 7/1  | Namespaces                  | Create a namespace and deploy a Pod into it                           |  [ ]  |
 | 3   | 7/2  | ReplicaSets                 | Create a ReplicaSet with 3 replicas and scale it                      |  [ ]  |
 | 4   | 7/3  | Deployments                 | Convert ReplicaSet into Deployment and update it                      |  [ ]  |
@@ -54,7 +54,7 @@ Killacoda | 20 Scenarios
 
 | Day | Date    | Scenario Title                 | Completed (✅/❌) |
 |-----|---------|-------------------------------|-------------------|
-| 1   | 2025‑06‑30 | Scenario 1                     |       [ ]            |
+| 1   | 2025‑06‑30 | Scenario 1 - Vim Setup                     |       [x] 1           |
 | 2   | 2025‑07‑01 | Scenario 2                     |       [ ]            |
 | 3   | 2025‑07‑02 | Scenario 3                     |       [ ]            |
 | 4   | 2025‑07‑03 | Scenario 4                     |       [ ]            |
@@ -78,7 +78,7 @@ Killacoda | 20 Scenarios
 Killacoda | 30 Scenarios
 | Day | Date       | Scenario Title              | Completed (✅/❌) |
 |-----|------------|-----------------------------|------------------|
-| 1   | 2025-06-30 |                             |        [ ]          |
+| 1   | 2025-06-30 |   Scenarion 1 -  Create a Gateway and HTTPRoute |        [❌]          |
 | 2   | 2025-07-01 |                             |        [ ]          |
 | 3   | 2025-07-02 |                             |        [ ]          |
 | 4   | 2025-07-03 |                             |        [ ]          |
