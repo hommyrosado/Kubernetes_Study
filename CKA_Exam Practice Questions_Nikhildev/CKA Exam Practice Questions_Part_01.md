@@ -8,7 +8,6 @@ Certified Kubernetes Administrator (CKA) Exam Practice Questions - 2023 - Part 1
 | Date   | Title | Source|
 |-----------|---------|---------|
 | 20250625      |  ✅ Certified Kubernetes Administrator (CKA) Exam Practice Questions - 2023 - Part 1   |  https://www.youtube.com/watch?v=4THV5o6ntIE&list=PLTCdA9kpJ7okpLcuBqSJMaJaiaay0mg-F  |
-| 345 Software Eng  |  ✅  |  ✅ 60 %   |  ✅ 80 % |
 
 
 
