@@ -121,7 +121,7 @@ CKA Gateway API: https://gateway-api.sigs.k8s.io/
 | 5   | 2025-07-13 | Scenario 5             | \[ ]            |
 | 6   | 2025-07-14 | Scenario 6             | \[ ]            |
 | 7   | 2025-07-15 | Scenario 7             | \[ ]            |
-| 8   | 2025-07-16 | Scenario 8             | \[ ]            |
+| 8   | 2025-07-16 | Scenario 8 - Application Multi Container             | \[ ]            |
 | 9   | 2025-07-17 | Scenario 9             | \[ ]            |
 | 10  | 2025-07-18 | Scenario 10            | \[ ]            |
 | 11  | 2025-07-19 | Scenario 11            | \[ ]            |
