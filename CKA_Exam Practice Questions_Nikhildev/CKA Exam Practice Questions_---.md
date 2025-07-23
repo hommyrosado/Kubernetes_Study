@@ -351,7 +351,7 @@ Run:
 END: 16:47
 --
 
-Begin part 2
+**Begin part 2**
 Question #4:
 
 You can find an existing deployment frontend in production namespace.
@@ -510,5 +510,119 @@ Locate the following section and change:
 Check service
 `kubectl get 
 TIME: 28:08
+
+**Begin Part 3**
+Reviews Kubernetes documentation.
+
+Examine how to create a pod from the kubernetes documentation.
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:1.14.2
+    ports:
+    - containerPort: 80
+```
+
+Create the pod:
+`kubectl apply -f 1.yaml`
+
+Now try to create a deployment:
+
+
+Deployment sample:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+```
+
+Apply:
+`kubectl apply -f nginx-deployment.yaml`
+
+Result: deployment.apps/nginx-deployment created
+
+See the newly created deployment **deploy**
+`kubectl get deploy`
+ 'Deployment' is a type of controller.
+ It controls the state of pods to match the desired state defined in the Deployment spec.
+
+ Kubernetes structure:
+
+```bash
+controllers/
+├── nginx-deployment.yaml   # <- defines a Deployment controller
+services/
+├── nginx-service.yaml      # <- defines a Service
+pods/
+├── nginx-pod.yaml          # <- standalone Pod
+
+```
+
+Examines example of finding content in the kubernetes documentation.
+Example of Persistence Volumes.
+Edit the content as per the question.
+
+Create PV on the cluster.
+
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: task-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+
+
+```
+
+controlplane:~/pods/storage$ k apply -f pv-volume.yaml 
+persistentvolume/task-pv-volume created
+
+`kubectl get pv`
+
+Result:
+
+```bash
+controlplane:~/pods/storage$ k get pv -o wide
+NAME            CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS     CLAIM   STORAGECLASS   VOLUMEMODE   VOLUMEATTRIBUTESCLASS   REASON   AGE
+task-pv-volume  10Gi       RWO            Retain            Available          manual         Filesystem   <unset>                 63s
+controlplane:~/pods/storage$
+
+```
+
 
 
