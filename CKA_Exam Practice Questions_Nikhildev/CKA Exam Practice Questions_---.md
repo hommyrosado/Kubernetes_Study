@@ -33,7 +33,7 @@ Task: Write the logs of the deployment in the namespace *management*
 
 Find the deployments in the *management* namespace
 
-`kubectl get deploy -n namespace management`
+`kubectl get deploy -n management`
 
 ```bash
 controlplane:~$ kubectl get deploy -n management
@@ -249,7 +249,7 @@ metadata:
     run: nginxpod
   name: nginxpod
 spec:
-  nodeName: controlplane
+**  nodeName: controlplane**
   containers:
   - image: nginx
     name: nginxpod
@@ -262,6 +262,9 @@ status: {}
 
 Re-apply the pod creation from the 1.yaml.
 `kubectl apply -f 1.yaml`
+
+`k get pod`
+`k get pod -o wide`
 
 ```bash
 controlplane:~$ kubectl apply -f 1.yaml 
@@ -280,3 +283,232 @@ controlplane:~$
 Now the pod is created in the controlplane / master node.
 
 END: 12:30
+
+---
+Begin Question 2
+Start: 12:33
+
+Expose a existing pod call nginxpod as a service, service name should be **nginxsvc**
+
+Pod port=80
+`kubectl expose pod nginxpod --name=nginxpod --port=80`
+Results:
+service/exposed
+
+Check on services
+`kubectl get service` or `kubectl get svc`
+
+
+`curl <ip address>`
+END: 13:46
+
+---
+
+Question #3:
+
+Expose the existing pod call **nginxpod**, service name as **nginxnodeportsvc**, service should access through **Nodeport**
+
+Nodeport=30200
+
+Expose the pod through the NodePort.
+`kubectl expose pod nginxpod --name=nginxnodeportsvc --port=80 --type=NodePort`
+
+`kubectl get svc`
+
+```bash
+controlplane:~$ kubectl get svc
+NAME               TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+kubernetes         ClusterIP   10.96.0.1        <none>        443/TCP        37h
+nginxnodeportsvc   NodePort    10.102.114.115   <none>        80:31222/TCP   10m
+nginxsvc           ClusterIP   10.101.94.192    <none>        80/TCP         22m
+```
+
+Port for [nginxnodeportsvc] shows as 31222. Should be 30200.
+
+`kubectl edit svc nginxnodeportsvc`
+
+Locate the following section and change:
+```yaml
+  ports:
+  - nodePort: 31222
+```
+
+Run to view if port has changed:
+`kubectl get svc`
+Then to test, run the following to run a curl command on the IP address and append the port number.
+
+`kubectl get node -o wide`
+```bash
+controlplane:~$ kubectl get node -o wide
+NAME           STATUS   ROLES           AGE   VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION     CONTAINER-RUNTIME
+controlplane   Ready    control-plane   37h   v1.33.2   172.30.1.2    <none>        Ubuntu 24.04.1 LTS   6.8.0-51-generic   containerd://1.7.27
+node01         Ready    <none>          36h   v1.33.2   172.30.2.2    <none>        Ubuntu 24.04.1 LTS   6.8.0-51-generic   containerd://1.7.27
+```
+
+Run:
+`curl 172.30.2.2:30200`
+
+END: 16:47
+--
+
+Begin part 2
+Question #4:
+
+You can find an existing deployment frontend in production namespace.
+Scale down the replicas to 2 and change the image to nginx:1.25
+
+Find the deployment in the **production** namespace.
+
+`kubectl get deployment -n production`
+
+Results show: deployment **frontend** consisting of 3 pods 3/3
+
+Solve by either editing the existing deployment...
+Or use IMPERITIVE COMMANDS.
+
+1. Edit the deployment
+`kubectl edit deploy frontend -n production`
+Find **replicas** and change to 2
+Change image name: nginx:1.25
+
+Run to check if deployment has scaled down to 2/2.
+`kubectl get deployment -n production`
+
+Run **describe** to get detailed information on resource
+`kubectl describe deploy frontend -n production`
+
+
+2. Imperitive command - check deployments before `kubectl get deployments -n production`
+First scale down the deployment
+`kubectl scale deploy frontend --replicas=2 -n production`
+Result:
+deployment.apps/frontend scaled
+Frontend 2/2
+Second change the image.
+`kubectl set image deploy frontend nginx=nginx:1.25 -n production`
+Result:
+deployment.apps/frontend image updated
+
+Get description for verification.
+`kubectl describe deploy frontend -n production`
+Scroll up and down to see Replicas and Image.
+
+
+--
+
+Question # 5:
+Autoscale the existing deployment **frontend** in **production** namespace at 80% of pod CPU usage.
+Set Minimum replicas=3 and Maximum replicas=5
+
+Impliment HPA - Horizontal Pod AutoScaler
+Horizontal Pod Autoscaler (HPA) automatically scales the number of pods
+
+Check deployments in production namespace.
+`kubectl get deploy -n production`
+
+Shows: frontend
+
+Solve with IMPERITIVE command
+`kubectl -n production autoscale deploy frontend --min=3 --max=5 --cpu-percentage=80`
+
+Result:
+horizontalpodautoscaler.autoscaling/frontend autoscaled
+
+Check and verify
+`kubectl get hpa -n production`
+
+Result:
+```bash
+controlplane $ kubectl get deploy -n production
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+frontend  2/2     2            2           40m
+
+controlplane $ kubectl -n production autoscale deploy frontend --min=3 --max=5 --cpu-percent=80
+horizontalpodautoscaler.autoscaling/frontend autoscaled
+
+controlplane $ k get hpa -n production
+NAME      REFERENCE              TARGETS         MINPODS   MAXPODS   REPLICAS   AGE
+frontend  Deployment/frontend   <unknown>/80%    3         5         0          14s
+
+controlplane $
+```
+
+END Q5: 25:03
+---
+
+
+Question # 6:
+Expose existing deployment in production namespace named as **frontend** through Nodeport and Nodeport service name should be **frontendsvc**
+
+Previous question asked to: Expose the **pod** through the NodePort.
+This question is Expose the **deployment** through Nodeport.
+
+[Namespace --> Deployment --> Nodes --> Pods --> Containers]
+
+Check the deployment in production namespace.
+`kubectl get deploy -n production`
+
+Shows: frontend 2/2 Ready 
+
+We have to expose the frontend deployment.
+
+`kubectl -n production expose deploy frontend --name=frontendsvc --port=80 --type=NodePort`
+
+Return:
+service/frontendsvc exposed
+
+Check the service
+
+`kubectl get svc` or `kubectl get svc -n production`
+
+Should show:
+
+```bash
+controlplane $ k get deploy -n production
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE
+frontend  2/2     2            2           8m58s
+
+controlplane $ k -n production expose deploy frontend --name=frontendsvc --port=80 --type=NodePort
+service/frontendsvc exposed
+
+controlplane $ k get svc -n production
+NAME          TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+frontendsvc   NodePort   10.105.69.93   <none>        80:30194/TCP     8s
+
+controlplane $
+
+```
+
+We determine that the service is exposed: frontendsvc   NodePort   10.105.69.93 
+
+Check if the service is exposing or not:
+`kubectl get nodes -o wide`
+
+```bash
+controlplane $ k get nodes -o wide
+NAME          STATUS   ROLES           AGE    VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+controlplane  Ready    control-plane   7d2h   v1.27.1   172.30.1.2    <none>        Ubuntu 20.04.5 LTS   5.4.0-131-generic   containerd://1.6.12
+node01        Ready    <none>          7d2h   v1.27.1   172.30.2.2    <none>        Ubuntu 20.04.5 LTS   5.4.0-131-generic   containerd://1.6.12
+
+controlplane $
+```
+
+The example uses the `frontendsvc   NodePort   10.105.69.93   <none>        80:30194/TCP ` frontendsvc PORT: ending in **30194**.
+`curl 172.30.2.2:30194`
+
+Which results in html page code in console.
+
+CAUTIONL: May have to expose the service NodePort through a specific port: 30200. 
+You may have to edit `kubectl edit svc frontendsvc -n production`
+
+Locate the following section and change:
+```yaml
+  ports:
+  - nodePort: 31222
+```
+
+Check service
+`kubectl get 
+TIME: 28:08
+
+
