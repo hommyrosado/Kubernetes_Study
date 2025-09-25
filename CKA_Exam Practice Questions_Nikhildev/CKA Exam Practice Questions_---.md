@@ -1,5 +1,11 @@
+Title: Certified Kubernetes Administrator (CKA) Exam Practice Questions - 2023 - Part 1
 
-Min: 3:16
+Source: https://www.youtube.com/watch?v=4THV5o6ntIE&list=PLTCdA9kpJ7okpLcuBqSJMaJaiaay0mg-F
+
+Order:
+Namespace --> Deployment --> Nodes --> Pods --> Containers
+
+
 Playgrounds Kubernetes Version
 
 Command: `kubectl get nodes`
@@ -17,9 +23,10 @@ controlplane:~$
 1 master  and 1 node CLUSTER
 
 Next SELECT CKA Section
+Min: 3:00
 
 ---
-Min: 4:00
+Min: 43:09
 Application Multi Container Issue ( # 7/20 )
 Gather logs
 
@@ -34,6 +41,8 @@ Task: Write the logs of the deployment in the namespace *management*
 Find the deployments in the *management* namespace
 
 `kubectl get deploy -n management`
+Shows all the *deployments* in the *management* namespace.
+Only one deployment: collect-data
 
 ```bash
 controlplane:~$ kubectl get deploy -n management
@@ -60,6 +69,16 @@ or
 Results in the following section of YAML (deployment configuration) that we are concerned with two containers:  
 Container 1: nginx
 Container 2: httpd
+
+Note: In the below YAML there are 2 replicas
+A replica = one Pod (copy) of the Pod template.
+Each Pod runs all the containers defined in the Deployment.
+So:
+2 replicas → 2 Pods
+Each Pod has 2 containers
+Total = 4 containers running
+✅ If only one container is defined → Pod = Container.
+✅ If multiple containers are defined → Pod ≠ Container (it’s a wrapper that holds multiple containers).
 
 ```yaml
     spec:

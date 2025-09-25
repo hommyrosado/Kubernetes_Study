@@ -108,64 +108,39 @@ questions = [
         "question": "Create a cluster role binding for a service account",
         "answer": "kubectl create clusterrolebinding sa-viewer --clusterrole=view --serviceaccount=default:my-sa"
     },
-{
-        "question": "Display all nodes in the cluster",
-        "answer": "kubectl get nodes"
-    },
-    {
-        "question": "Write logs of container nginx in deployment 'collect-data' in namespace 'management' to /root/logs.log",
-        "answer": "kubectl logs -n management deploy/collect-data -c nginx >> /root/logs.log"
-    },
-    {
-        "question": "Write logs of container httpd in deployment 'collect-data' in namespace 'management' to /root/logs.log",
-        "answer": "kubectl logs -n management deploy/collect-data -c httpd >> /root/logs.log"
-    },
-    {
-        "question": "Create a pod manifest using dry-run and save to 1.yaml",
-        "answer": "kubectl run nginxpod --image=nginx --dry-run=client -o yaml >1.yaml"
-    },
-    {
-        "question": "Create a pod from the manifest file 1.yaml",
-        "answer": "kubectl apply -f 1.yaml"
-    },
-    {
-        "question": "Schedule pod defined in 1.yaml to controlplane node",
-        "answer": "Edit 1.yaml to add: nodeName: controlplane, then apply with kubectl apply -f 1.yaml"
-    },
-    {
-        "question": "Expose pod 'nginxpod' as service 'nginxsvc' on port 80",
-        "answer": "kubectl expose pod nginxpod --name=nginxsvc --port=80"
-    },
-    {
-        "question": "Expose pod 'nginxpod' as a NodePort service named 'nginxnodeportsvc' on port 80",
-        "answer": "kubectl expose pod nginxpod --name=nginxnodeportsvc --port=80 --type=NodePort"
-    },
-    {
-        "question": "Edit NodePort of service 'nginxnodeportsvc' to use 30200",
-        "answer": "kubectl edit svc nginxnodeportsvc"
-    },
-    {
-        "question": "Scale deployment 'frontend' in 'production' namespace to 2 replicas",
-        "answer": "kubectl scale deploy frontend --replicas=2 -n production"
-    },
-    {
-        "question": "Change image of deployment 'frontend' in 'production' namespace to nginx:1.25",
-        "answer": "kubectl set image deploy frontend nginx=nginx:1.25 -n production"
-    },
-    {
-        "question": "Autoscale deployment 'frontend' in 'production' namespace from 3 to 5 pods at 80%% CPU",
-        "answer": "kubectl -n production autoscale deploy frontend --min=3 --max=5 --cpu-percentage=80"
-    },
-    {
-        "question": "Expose deployment 'frontend' in 'production' namespace as a NodePort service named 'frontendsvc'",
-        "answer": "kubectl -n production expose deploy frontend --name=frontendsvc --port=80 --type=NodePort"
-    },
-    {
-        "question": "Create a PersistentVolume with 10Gi and path /mnt/data",
-        "answer": "kubectl apply -f pv-volume.yaml"
-    }
-]
 
+    # === Added: Full CKA 30 Questions with Solutions (Concise) ===
+    { "question": "Deploy a pod 'nginxpod' on the controlplane node", "answer": "kubectl run nginxpod --image=nginx --dry-run=client -o yaml > pod.yaml && edit nodeName: controlplane && kubectl apply -f pod.yaml" },
+    { "question": "Expose pod 'nginxpod' as ClusterIP service 'nginxsvc' on port 80", "answer": "kubectl expose pod nginxpod --name=nginxsvc --port=80" },
+    { "question": "Expose pod 'nginxpod' as NodePort service 'nginxnodeportsvc' with NodePort 30200", "answer": "kubectl expose pod nginxpod --name=nginxnodeportsvc --port=80 --type=NodePort && kubectl edit svc nginxnodeportsvc" },
+    { "question": "Create a Deployment 'nginx-deploy' with 3 replicas and scale to 5", "answer": "kubectl create deployment nginx-deploy --image=nginx --replicas=3 && kubectl scale deployment nginx-deploy --replicas=5" },
+    { "question": "Create a DaemonSet running nginx on all nodes", "answer": "kubectl create daemonset nginx-ds --image=nginx -n kube-system" },
+    { "question": "Create a static pod 'nginx-static'", "answer": "Place manifest in /etc/kubernetes/manifests/nginx-static.yaml" },
+    { "question": "Create a ConfigMap 'app-config' with APP_MODE=prod", "answer": "kubectl create configmap app-config --from-literal=APP_MODE=prod" },
+    { "question": "Create a Secret 'db-secret' with DB_PASS=admin123", "answer": "kubectl create secret generic db-secret --from-literal=DB_PASS=admin123" },
+    { "question": "Create a PersistentVolume 'pv-demo' with 1Gi and /mnt/data", "answer": "kubectl apply -f pv.yaml && kubectl apply -f pvc.yaml" },
+    { "question": "Use default StorageClass for a dynamic PVC", "answer": "kubectl apply -f pvc-dynamic.yaml" },
+    { "question": "Label pod nginxpod tier=frontend and list it", "answer": "kubectl label pod nginxpod tier=frontend && kubectl get pods -l tier=frontend" },
+    { "question": "Taint node01 with key=value:NoSchedule and run a tolerating pod", "answer": "kubectl taint node node01 key=value:NoSchedule && edit pod spec to add tolerations" },
+    { "question": "Create a pod with nodeAffinity requiring disktype=ssd", "answer": "Add affinity.nodeAffinity in pod spec" },
+    { "question": "Create pods with affinity and anti-affinity to role=frontend", "answer": "Add podAffinity and podAntiAffinity in pod spec" },
+    { "question": "Deploy a pod with cpu=500m,mem=128Mi requests and cpu=1,mem=256Mi limits", "answer": "Add resources.requests and resources.limits in pod spec" },
+    { "question": "Autoscale 'nginx-deploy' with CPU target 80%, min=1, max=5", "answer": "kubectl autoscale deployment nginx-deploy --cpu-percent=80 --min=1 --max=5" },
+    { "question": "Create a NetworkPolicy to allow frontend → db only", "answer": "kubectl apply -f netpol.yaml" },
+    { "question": "Create an Ingress with paths /app1 → svc1 and /app2 → svc2", "answer": "kubectl apply -f ingress.yaml" },
+    { "question": "Verify DNS resolution of service 'nginxsvc'", "answer": "kubectl run test --image=busybox --rm -it -- nslookup nginxsvc" },
+    { "question": "Deploy a pod with an initContainer and nginx main container", "answer": "Define initContainers and containers in pod spec" },
+    { "question": "Create a ServiceAccount 'app-sa' and run a pod with it", "answer": "kubectl create serviceaccount app-sa && edit pod spec with serviceAccountName: app-sa" },
+    { "question": "Create a Role allowing get/list pods in namespace dev and bind to app-sa", "answer": "kubectl apply -f role.yaml && kubectl apply -f rolebinding.yaml" },
+    { "question": "Create a ClusterRole allowing list nodes and bind to app-sa", "answer": "kubectl apply -f clusterrole.yaml && kubectl apply -f clusterrolebinding.yaml" },
+    { "question": "Enable NodeRestriction admission controller", "answer": "Edit /etc/kubernetes/manifests/kube-apiserver.yaml and add --enable-admission-plugins=NodeRestriction" },
+    { "question": "Run a pod with runAsUser=1000 and NET_ADMIN capability", "answer": "Add securityContext with runAsUser and capabilities in pod spec" },
+    { "question": "View logs of pod nginxpod (and sidecar if present)", "answer": "kubectl logs nginxpod && kubectl logs nginxpod -c sidecar" },
+    { "question": "Debug nginxpod with describe and exec", "answer": "kubectl describe pod nginxpod && kubectl exec -it nginxpod -- curl localhost" },
+    { "question": "Backup etcd to snapshot.db and restore it", "answer": "ETCDCTL_API=3 etcdctl snapshot save snapshot.db && ETCDCTL_API=3 etcdctl snapshot restore snapshot.db" },
+    { "question": "Upgrade cluster to v1.27.0", "answer": "kubeadm upgrade plan && kubeadm upgrade apply v1.27.0" },
+    { "question": "Locate and edit kube-apiserver manifest", "answer": "Edit /etc/kubernetes/manifests/kube-apiserver.yaml" }
+]
 
 def run_quiz():
     score = 0
