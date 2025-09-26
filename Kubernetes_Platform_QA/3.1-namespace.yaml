@@ -1,0 +1,6 @@
+apiVerion: v1
+kind: Namespace
+metadata:
+  name: microservice
+  labels:
+    app: counter
